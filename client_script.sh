@@ -1,14 +1,11 @@
 #!/bin/bash
 
-USERNAME=test
-PASSWORD=pass
-
 CACERTFILE="ca.crt"
 CLIENTCRT="client.crt"
 CLIENTKEY="client.key"
 CLIENTCONF="client.conf"
 
-read -p "Please give the server's ip" $answer
+read -p "Please give the server's ip: " $answer
 
 if [[ -z "${answer// }" ]]; then
     SERVER_IP="83.212.116.170"
@@ -16,6 +13,9 @@ else
     SERVER_IP=$answer
 fi
 
+echo "User authentication"
+read -p "Username: " $USERNAME
+read -p "Password: " $PASSWORD
 
 openssl s_client -showcerts -connect $SERVER_IP:443/login </dev/null 2>/dev/null|openssl x509 -outform PEM > mycertfile.pem
 
