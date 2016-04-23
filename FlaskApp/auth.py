@@ -22,20 +22,3 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
-
-# @app.route('/')
-# def hello_world():
-    # x = User('panos', 'panos', 'panos@test.com')
-    # db.session.add(x)
-    # db.session.commit()
-    # users = User.query.all()
-    # print users
-    # if User.query.filter_by(username='test').first() != None:
-        # return 'user exists'
-    # else:
-        # return 'paparia exists'
-    #return str(users)
-
-# if __name__ == '__main__':
-    # db.create_all()
-    # app.run()
