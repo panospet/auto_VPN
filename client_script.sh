@@ -5,7 +5,7 @@ CLIENTCRT="client.crt"
 CLIENTKEY="client.key"
 CLIENTCONF="client.conf"
 
-read -p "Please give the server's ip: " $answer
+read -p "Please give the server's ip: " answer
 
 if [[ -z "${answer// }" ]]; then
     SERVER_IP="83.212.116.170"
@@ -14,12 +14,13 @@ else
 fi
 
 echo "User authentication"
-read -p "Username: " $USERNAME
-read -p "Password: " $PASSWORD
+read -p "Username: " user
+read -p "Password: " pass
+
 
 openssl s_client -showcerts -connect $SERVER_IP:443/login </dev/null 2>/dev/null|openssl x509 -outform PEM > mycertfile.pem
 
-curl --cacert mycertfile.pem --cookie-jar cookies_temp 'https://'$SERVER_IP'/login' --data 'username='$USERNAME'&password='$PASSWORD'&submit=Login'
+curl --cacert mycertfile.pem --cookie-jar cookies_temp 'https://'$SERVER_IP'/login' --data 'username='$user'&password='$pass'&submit=Login'
 
 curl --cacert mycertfile.pem --cookie cookies_temp 'https://'$SERVER_IP'/cacert' > $CACERTFILE
 
