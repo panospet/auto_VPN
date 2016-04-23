@@ -1,9 +1,7 @@
 #!/bin/bash
 
-set -x
-
 USERNAME=test
-PASSWORD=test
+PASSWORD=pass
 
 CACERTFILE="ca.crt"
 CLIENTCRT="client.crt"
@@ -21,7 +19,7 @@ fi
 
 openssl s_client -showcerts -connect $SERVER_IP:443/login </dev/null 2>/dev/null|openssl x509 -outform PEM > mycertfile.pem
 
-curl --cacert mycertfile.pem --cookie-jar cookies_temp 'https://'$SERVER_IP'/login' --data 'username=test&password=test&submit=Login'
+curl --cacert mycertfile.pem --cookie-jar cookies_temp 'https://'$SERVER_IP'/login' --data 'username='$USERNAME'&password='$PASSWORD'&submit=Login'
 
 curl --cacert mycertfile.pem --cookie cookies_temp 'https://'$SERVER_IP'/cacert' > $CACERTFILE
 
