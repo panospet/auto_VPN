@@ -77,8 +77,7 @@ def logout():
 @app.route('/file')
 @login_required
 def file():
-    #    os.system("echo hello, " + session['username'] + "! > /var/www/FlaskApp/FlaskApp/client_script.sh")
-    filename = '/var/www/FlaskApp/FlaskApp/client_script.sh'
+    filename = '/var/www/FlaskApp/client_script.sh'
     return send_file(filename, as_attachment=True, mimetype='application/text')
 
 
