@@ -7,13 +7,15 @@
   </head>
   <body>
     <div class="container">
-      <h1>Index.html</h1>
+      <h1>Welcome!</h1>
       <br>
-      <p>Click <a href="/logout">here</a> to logout.</p>
-      <p>Click <a href="/file">here</a> to receive your client script.</p>
+      <p>
       {% for message in get_flashed_messages() %}
         {{ message }}
       {% endfor %}
+      </p>
+      <p>Click <a href="/logout">here</a> to logout.</p>
+      <p>Click <a href="/file">here</a> to receive your client script.</p>
     </div>
   </body>
 </html>
