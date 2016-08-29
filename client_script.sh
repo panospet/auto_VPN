@@ -5,6 +5,10 @@ CLIENTCRT="client.crt"
 CLIENTKEY="client.key"
 CLIENTCONF="client.conf"
 
+echo "Please login..."
+read -p "Username: " user
+read -s -p "Password: " pass
+echo
 read -p "Please give the server's ip: " answer
 
 if [[ -z "${answer// }" ]]; then
@@ -13,10 +17,14 @@ else
     SERVER_IP=$answer
 fi
 
-echo "User authentication"
-read -p "Username: " user
-read -p "Password: " pass
+RESULT=$(wget -qO- --no-check-certificate --post-data="username=$user&password=$pass" https://$SERVER_IP/login)
 
+if echo $RESULT | grep -qi "invalid credentials"; then
+    echo "Invalid credentials."
+    exit 1;
+else
+    echo "Login successfull."
+fi
 
 openssl s_client -showcerts -connect $SERVER_IP:443/login </dev/null 2>/dev/null|openssl x509 -outform PEM > mycertfile.pem
 
