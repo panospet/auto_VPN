@@ -1,4 +1,4 @@
-from flask import Flask
+# from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from __init__ import app as app
 
@@ -13,11 +13,13 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, primary_key=True)
     password = db.Column(db.String(80), unique=False)
     email = db.Column(db.String(120), unique=True)
+    admin_rights = db.Column(db.Boolean(), default=False)
 
-    def __init__(self, username, password, email):
+    def __init__(self, username, password, email, admin_rights):
         self.username = username
         self.password = password
         self.email = email
+        self.admin_rights = admin_rights
 
     def __repr__(self):
         return '<User %r>' % self.username

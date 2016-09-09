@@ -3,14 +3,16 @@
 
 #### Must do
 
-1. Script must ask for authentication
+1. Script must ask for authentication... DONE
 2. Documentation for 
     a. usability and explanation of why this is something significant
     b. functionality and how it works (server and client)
 3. client_script must be cross-platform (Linux, Windows, IOS)
+    a. check out powershell
+    b. take everything we need in a packet initially (are there portable versions of all those?)
 4. Script must totally wipe out what it has created
-5. Add here!
-
-#### Optional:
-4. Store passwords encrypted
-5. /register path only for admin to register new users.
+    I can use the "shred" command.
+5. Script must check if openvpn/curl/wget and other programs are installed. If not, it must install
+   them or better use a portable version.
+6. /register path for admin to register new users.
+7. Store passwords encrypted. (marked as optional)

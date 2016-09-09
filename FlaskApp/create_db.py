@@ -8,9 +8,10 @@ print 'Success, connected to database'
 conn.execute('''CREATE TABLE user
     (USERNAME TEXT  PRIMARY KEY    NOT NULL,
      PASSWORD   TEXT    NOT NULL,
-     EMAIL  TEXT    NOT NULL
+     EMAIL  TEXT    NOT NULL,
+     ADMIN_RIGHTS  BOOLEAN  NOT NULL
     );'''
-    )
+)
 print 'Table created successfully'
 
 conn.close()
