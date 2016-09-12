@@ -1,9 +1,11 @@
-from flask import Flask, render_template, redirect, url_for, request, session, flash, current_app, send_file, escape
-from flask.ext.login import LoginManager
+#!/usr/bin/env python
+
+from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file, escape  # NOQA
 from functools import wraps
 import os
 import subprocess
-from auth import *
+from auth import *  # NOQA
+from add_user_to_db import add_user
 
 # create the application object
 app = Flask(__name__)
@@ -37,6 +39,23 @@ def welcome():
     return render_template('welcome.html')
 
 
+@app.route('/test')
+def test():
+    return render_template('register.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+@login_required
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        # also email must be specified
+        add_user(username, password, 'mpla@mpla.gr', False)
+        # must clean out the form and redirect somewhere
+    return render_template('register.html')
+
+
 # route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -44,7 +63,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if User.query.filter_by(username=username,password=password).first() == None:
+        if User.query.filter_by(username=username, password=password).first() is None:
             error = 'Invalid Credentials. Please try again.'
         else:
             session['logged_in'] = True
@@ -53,6 +72,27 @@ def login():
             create_files()
             return redirect(url_for('home'))
     return render_template('login.html', error=error)
+
+
+# route for handling the admin login page logic
+@app.route('/admin_login', methods=['GET', 'POST'])
+def admin_login():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username == 'admin':
+            if User.query.filter_by(username=username, password=password).first() is None:
+                error = 'Invalid Credentials. Please try again.'
+            else:
+                session['logged_in'] = True
+                session['username'] = request.form['username']
+                flash('Hello ' + session['username'] + ', you were logged in.')
+                create_files()
+                return redirect(url_for('register'))
+        else:
+            error = 'Invalid credentials, please login as an administrator.'
+    return render_template('admin_login.html', error=error)
 
 
 def create_files():
@@ -106,6 +146,4 @@ def clientkey():
 
 # start the server with the 'run()' method
 if __name__ == '__main__':
-    auth.db.create_all()
     app.run(debug=True)
-

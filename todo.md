@@ -14,5 +14,5 @@
     I can use the "shred" command.
 5. Script must check if openvpn/curl/wget and other programs are installed. If not, it must install
    them or better use a portable version.
-6. /register path for admin to register new users.
+6. /register path for admin (must add code for adding/removing users).
 7. Store passwords encrypted. (marked as optional)
