@@ -17,3 +17,10 @@ Translate client_script to python, it's the best way to implement the cross-plat
    them or better use a portable version.
 6. /register path for admin (must add code for adding/removing users).
 7. Store passwords encrypted. (marked as optional)
+
+
+#### Windows script todos
+1. client.ovpn file must be created dynamically
+2. test.py must have username/password/server_ip/certificate_filenames etc as variables
+3. test in another windows systems
+4. shred in windows?
