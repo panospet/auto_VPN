@@ -1,1 +1,6 @@
 *.pyc
+.idea
+ca.crt
+client.conf
+client.key
+client.crt
