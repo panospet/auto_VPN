@@ -4,23 +4,21 @@ Translate client_script to python, it's the best way to implement the cross-plat
 
 #### Must do
 
-1. Script must ask for authentication... DONE
-2. Documentation for 
+- Script must ask for authentication... DONE
+- Documentation for 
     a. usability and explanation of why this is something significant
     b. functionality and how it works (server and client)
-3. client_script must be cross-platform (Linux, Windows, IOS)
+- client_script must be cross-platform (Linux, Windows, IOS)
     a. check out powershell
     b. take everything we need in a packet initially (are there portable versions of all those?)
-4. Script must totally wipe out what it has created
+- Script must totally wipe out what it has created
     I can use the "shred" command.
-5. Script must check if openvpn/curl/wget and other programs are installed. If not, it must install
-   them or better use a portable version.
-6. /register path for admin (must add code for adding/removing users).
-7. Store passwords encrypted. (marked as optional)
+- Script must check if openvpn/curl/wget and other programs are installed. If not, it must install them or better use a portable version.
+- /register path for admin (must add code for adding/removing users).
 
 
 #### Windows script todos
-1. client.ovpn file must be created dynamically
-2. test.py must have username/password/server_ip/certificate_filenames etc as variables
-3. test in another windows systems
-4. shred in windows?
+- client.ovpn file must be created dynamically
+- test.py must have username/password/server_ip/certificate_filenames etc as variables
+- test in another windows systems
+- shred in windows?

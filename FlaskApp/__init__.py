@@ -117,8 +117,9 @@ def logout():
 @app.route('/file')
 @login_required
 def file():
-    filename = '/var/www/FlaskApp/client_script.sh'
-    return send_file(filename, as_attachment=True, mimetype='application/text')
+    os.system("tar -czvf app.tar.gz client_script.sh client_script.py")
+    filename = '/var/www/FlaskApp/app.tar.gz'
+    return send_file(filename, as_attachment=True, mimetype='application/gzip')
 
 
 @app.route('/cacert')

@@ -19,21 +19,25 @@ c.setopt(c.FOLLOWLOCATION, True)
 c.setopt(pycurl.WRITEFUNCTION, lambda x: None)
 c.perform()
 
+# Save cacert file
 c.setopt(pycurl.URL, 'https://83.212.116.170/cacert')
 with open('ca.crt', 'w') as f:
     c.setopt(c.WRITEFUNCTION, f.write)
     c.perform()
 
+# Save client cert file
 c.setopt(pycurl.URL, 'https://83.212.116.170/clientcert')
 with open('client.crt', 'w') as f:
     c.setopt(c.WRITEFUNCTION, f.write)
     c.perform()
 
+# Save client key file
 c.setopt(pycurl.URL, 'https://83.212.116.170/clientkey')
 with open('client.key', 'w') as f:
     c.setopt(c.WRITEFUNCTION, f.write)
     c.perform()
 
+# Logout
 c.setopt(pycurl.URL, 'https://83.212.116.170/logout')
 c.setopt(pycurl.WRITEFUNCTION, lambda x: None)
 c.perform()
