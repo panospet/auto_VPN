@@ -99,7 +99,8 @@ def create_files():
     user_folder = "/var/www/FlaskApp/FlaskApp/" + session['username'] + "_files"
     os.system("mkdir -p " + user_folder)
     os.system("cp /usr/share/easy-rsa/keys/ca.crt " + user_folder)
-    os.system("tar -czvf /var/www/FlaskApp/linux_app.tar.gz -C /var/www/FlaskApp/linux_app/ client_script.sh client_script.py get-pip.py")
+    os.system("tar -czvf /var/www/FlaskApp/linux_app.tar.gz -C /var/www/FlaskApp/ linux_app")
+    os.system("tar -czvf /var/www/FlaskApp/windows_app.tar.gz -C /var/www/FlaskApp/ windows_app")
     print subprocess.check_output(
         '/usr/share/easy-rsa/negotiation.sh ' + session['username'] + ' && cp /usr/share/easy-rsa/keys/' + session[
             'username'] + '* /var/www/FlaskApp/FlaskApp/' + session['username'] + '_files/', shell=True)
@@ -110,15 +111,23 @@ def create_files():
 def logout():
     os.system("rm -rf /var/www/FlaskApp/FlaskApp/" + session['username'] + "_files")
     os.system("rm -rf /var/www/FlaskApp/linux_app.tar.gz")
+    os.system("rm -rf /var/www/FlaskApp/windows_app.tar.gz")
     session.pop('logged_in', None)
     flash('You were logged out.')
     return redirect(url_for('welcome'))
 
 
-@app.route('/file')
+@app.route('/linux_download')
 @login_required
 def file():
     filename = '/var/www/FlaskApp/linux_app.tar.gz'
+    return send_file(filename, as_attachment=True, mimetype='application/gzip')
+
+
+@app.route('/windows_download')
+@login_required
+def windows_file():
+    filename = '/var/www/FlaskApp/windows_app.tar.gz'
     return send_file(filename, as_attachment=True, mimetype='application/gzip')
 
 
