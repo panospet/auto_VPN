@@ -1,5 +1,9 @@
 import pycurl
 import certifi
+import getpass
+import pwd
+import grp
+
 try:
     # python 3
     from urllib.parse import urlencode
@@ -43,6 +47,12 @@ c.setopt(pycurl.WRITEFUNCTION, lambda x: None)
 c.perform()
 c.close()
 
+
+def get_group_from_username(username):
+    for p in pwd.getpwall():
+        if (p[0] == username):
+            return grp.getgrgid(p[3])[0]
+
 # create client.conf file
 client_conf_file = open('client.conf', 'w+')
 f = open('client.conf', 'a+')
@@ -61,9 +71,3 @@ f.write('persist-tun' + '\n')
 f.write('persist-key' + '\n')
 f.write('user ' + getpass.getuser() + '\n')
 f.write('group ' + get_group_from_username(getpass.getuser()) + '\n')
-
-def get_group_from_username(username):
-    for p in pwd.getpwall():
-        if (p[0] == username):
-            return grp.getgrgid(p[3])[0]
-
