@@ -1,5 +1,5 @@
 #!/bin/bash
-python ./windows_app/get-pip.py
+python get-pip.py
 python -m pip install pycurl
 python -m pip install certifi
 python client_script.py

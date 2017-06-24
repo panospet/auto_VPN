@@ -59,6 +59,11 @@ f.write('keepalive 10 60' + '\n')
 f.write('ping-timer-rem' + '\n')
 f.write('persist-tun' + '\n')
 f.write('persist-key' + '\n')
-f.write('user panos' + '\n')
-f.write('group panos' + '\n')
+f.write('user ' + getpass.getuser() + '\n')
+f.write('group ' + get_group_from_username(getpass.getuser()) + '\n')
+
+def get_group_from_username(username):
+    for p in pwd.getpwall():
+        if (p[0] == username):
+            return grp.getgrgid(p[3])[0]
 

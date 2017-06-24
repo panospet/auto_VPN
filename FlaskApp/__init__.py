@@ -51,7 +51,7 @@ def register():
         username = request.form['username']
         password = request.form['password']
         # also email must be specified
-        add_user(username, password, 'mpla@mpla.gr', False)
+        add_user(username, password, '', False)
         # must clean out the form and redirect somewhere
     return render_template('register.html')
 
