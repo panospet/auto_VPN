@@ -4,23 +4,8 @@ python -m pip install pycurl
 python -m pip install certifi
 python client_script.py
 
-#clear
 echo "Starting VPN connection in 5 seconds, press CTRL-C anytime to stop"
-sleep 1
-#clear
-echo "Starting VPN connection in 4 seconds, press CTRL-C anytime to stop"
-sleep 1
-#clear
-echo "Starting VPN connection in 3 seconds, press CTRL-C anytime to stop"
-sleep 1
-#clear
-echo "Starting VPN connection in 2 seconds, press CTRL-C anytime to stop"
-sleep 1
-#clear
-echo "Starting VPN connection in 1 seconds, press CTRL-C anytime to stop"
-sleep 1
-#clear
-
+sleep 5
 echo "Starting OpenVPN..."
 sleep 2
 
