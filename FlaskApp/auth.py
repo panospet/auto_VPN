@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
-# from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from __init__ import app as app
 
-# app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////var/www/FlaskApp/FlaskApp/test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)

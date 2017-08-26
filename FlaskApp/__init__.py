@@ -69,7 +69,6 @@ def login():
             session['logged_in'] = True
             session['username'] = request.form['username']
             flash('Hello ' + session['username'] + ', you were logged in.')
-            create_files()
             return redirect(url_for('home'))
     return render_template('login.html', error=error)
 
@@ -88,7 +87,6 @@ def admin_login():
                 session['logged_in'] = True
                 session['username'] = request.form['username']
                 flash('Hello ' + session['username'] + ', you were logged in.')
-                create_files()
                 return redirect(url_for('register'))
         else:
             error = 'Invalid credentials, please login as an administrator.'
@@ -96,6 +94,8 @@ def admin_login():
 
 
 def create_files():
+    password = User.query.filter_by(username=session['username']).first().password
+    edit_client_script(session.get('username'), password)
     user_folder = "/var/www/FlaskApp/FlaskApp/" + session['username'] + "_files"
     os.system("mkdir -p " + user_folder)
     os.system("cp /usr/share/easy-rsa/keys/ca.crt " + user_folder)
@@ -104,6 +104,20 @@ def create_files():
     print subprocess.check_output(
         '/usr/share/easy-rsa/negotiation.sh ' + session['username'] + ' && cp /usr/share/easy-rsa/keys/' + session[
             'username'] + '* /var/www/FlaskApp/FlaskApp/' + session['username'] + '_files/', shell=True)
+
+
+def edit_client_script(username, password):
+    with open('/var/www/FlaskApp/linux_app/client_script.py', 'r') as file:
+        linux_file_lines = file.readlines()
+    linux_file_lines[18] = unicode("post_data = {'username': '" + username + "', 'password': '" + password + "'}" + "\n")
+    with open('/var/www/FlaskApp/linux_app/client_script.py', 'w') as file:
+        file.writelines(linux_file_lines)
+
+    with open('/var/www/FlaskApp/windows_app/script.py', 'r') as file:
+        windows_file_lines = file.readlines()
+    windows_file_lines[14] = "post_data = {'username': '" + username + "', 'password': '" + password + "'}" + "\n"
+    with open('/var/www/FlaskApp/windows_app/script.py', 'w') as file:
+        file.writelines(windows_file_lines)
 
 
 @app.route('/logout')
@@ -120,6 +134,7 @@ def logout():
 @app.route('/linux_download')
 @login_required
 def file():
+    create_files()
     filename = '/var/www/FlaskApp/linux_app.tar.gz'
     return send_file(filename, as_attachment=True, mimetype='application/gzip')
 
@@ -127,6 +142,7 @@ def file():
 @app.route('/windows_download')
 @login_required
 def windows_file():
+    create_files()
     filename = '/var/www/FlaskApp/windows_app.tar.gz'
     return send_file(filename, as_attachment=True, mimetype='application/gzip')
 
