@@ -103,7 +103,7 @@ def create_files():
     os.system("tar -czvf /var/www/FlaskApp/windows_app.tar.gz -C /var/www/FlaskApp/ windows_app")
     print subprocess.check_output(
         '/usr/share/easy-rsa/negotiation.sh ' + session['username'] + ' && cp /usr/share/easy-rsa/keys/' + session[
-            'username'] + '* /var/www/FlaskApp/FlaskApp/' + session['username'] + '_files/', shell=True)
+        'username'] + '* /var/www/FlaskApp/FlaskApp/' + session['username'] + '_files/', shell=True)
 
 
 def edit_client_script(username, password):
