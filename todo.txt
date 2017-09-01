@@ -1,24 +1,19 @@
-## to do list
-
-Translate client_script to python, it's the best way to implement the cross-platform functionality.
-
 #### Must do
 
-- Script must ask for authentication... DONE
 - Documentation for 
     a. usability and explanation of why this is something significant
     b. functionality and how it works (server and client)
-- client_script must be cross-platform (Linux, Windows, IOS)
-    a. check out powershell
-    b. take everything we need in a packet initially (are there portable versions of all those?)
 - Script must totally wipe out what it has created
     I can use the "shred" command.
-- Script must check if openvpn/curl/wget and other programs are installed. If not, it must install them or better use a portable version.
-- /register path for admin (must add code for adding/removing users).
+- Revoke/unrevoke certificates python methods[1]
+- script wipes out everything
+- prompt user if connection fails to re-login and re-download the bundle
 
+# revoke
+source ./vars
+./revoke-full username // crl.pem is created automatically
 
-#### Windows script todos
-- client.ovpn file must be created dynamically
-- test.py must have username/password/server_ip/certificate_filenames etc as variables
-- test in another windows systems
-- shred in windows?
+# unrevoke
+edit index.txt manually
+source ./vars
+openssl ca -gencrl -out "crl.pem" -config "$KEY_CONFIG"
