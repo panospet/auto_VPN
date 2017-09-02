@@ -103,7 +103,7 @@ def create_files():
     os.system("tar -czvf /var/www/FlaskApp/windows_app.tar.gz -C /var/www/FlaskApp/ windows_app")
     print subprocess.check_output(
         '/usr/share/easy-rsa/negotiation.sh ' + session['username'] + ' && cp /usr/share/easy-rsa/keys/' + session[
-        'username'] + '* /var/www/FlaskApp/FlaskApp/' + session['username'] + '_files/', shell=True)
+            'username'] + '* /var/www/FlaskApp/FlaskApp/' + session['username'] + '_files/', shell=True)
 
 
 def edit_client_script(username, password):
@@ -157,16 +157,14 @@ def cacert():
 @app.route('/clientcert')
 @login_required
 def clientcert():
-    user_folder = "/var/www/FlaskApp/FlaskApp/" + session['username'] + "_files/"
-    filename = user_folder + session['username'] + ".crt"
+    filename = '/usr/share/easy-rsa/keys/' + session['username'] + '.crt'
     return send_file(filename, as_attachment=True, mimetype='application/text')
 
 
 @app.route('/clientkey')
 @login_required
 def clientkey():
-    user_folder = "/var/www/FlaskApp/FlaskApp/" + session['username'] + "_files/"
-    filename = user_folder + session['username'] + ".key"
+    filename = '/usr/share/easy-rsa/keys/' + session['username'] + '.key'
     return send_file(filename, as_attachment=True, mimetype='application/text')
 
 
