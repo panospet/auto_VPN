@@ -24,5 +24,6 @@ echo -e "V\t$column2\t\t$column4\t$column5\t$column6" >> $keys_index_file
 
 sed -i "${linenumber}d" $keys_index_file
 
-source /usr/share/easy-rsa/vars
-openssl ca -gencrl -out "/usr/share/easy-rsa/keys/crl.pem" -config /usr/share/easy-rsa/openssl-1.0.0.cnf
+# source /usr/share/easy-rsa/vars
+# openssl ca -gencrl -out "/usr/share/easy-rsa/keys/crl.pem" -config "$KEY_CONFIG"
+cd /usr/share/easy-rsa; source ./vars ; ./generate_crl_file.sh
