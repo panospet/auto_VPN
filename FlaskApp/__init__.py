@@ -6,7 +6,7 @@ import os
 import subprocess
 from auth import *  # NOQA
 from add_user_to_db import add_user
-from threading import Timer
+import threading
 import datetime
 
 # create the application object
@@ -133,32 +133,6 @@ def logout():
     return redirect(url_for('welcome'))
 
 
-@app.route('/linux_download', methods=['GET', 'POST'])
-@login_required
-def file():
-    create_files()
-    minutes = request.form['minutes']
-    if minutes == '':
-        minutes = '60'
-    with open('/var/www/FlaskApp/FlaskApp/timing_log.log', 'a') as f:
-        f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ':' + session.get('username') + ' requested linux_app for ' + minutes + ' minutes' + "\n")
-        f.close()
-    filename = '/var/www/FlaskApp/linux_app.tar.gz'
-    return send_file(filename, as_attachment=True, mimetype='application/gzip')
-
-
-@app.route('/windows_download', methods=['GET', 'POST'])
-@login_required
-def windows_file():
-    create_files()
-    minutes = request.form['minutes']
-    with open('/var/www/FlaskApp/FlaskApp/timing_log.log', 'a') as f:
-        f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ':' + session.get('username') + ' requested windows_app for ' + minutes + ' minutes' + "\n")
-        f.close()
-    filename = '/var/www/FlaskApp/windows_app.tar.gz'
-    return send_file(filename, as_attachment=True, mimetype='application/gzip')
-
-
 @app.route('/cacert')
 @login_required
 def cacert():
@@ -180,17 +154,70 @@ def clientkey():
     return send_file(filename, as_attachment=True, mimetype='application/text')
 
 
+@app.route('/linux_download', methods=['GET', 'POST'])
+@login_required
+def file():
+    create_files()
+    minutes = request.form['minutes']
+    if minutes == '':
+        minutes = '60'
+    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ':' + session.get('username') + ' requested linux_app for ' + minutes + ' minutes' + "\n")
+    set_timer_for_revoke(session.get('username'), float(minutes))
+    filename = '/var/www/FlaskApp/linux_app.tar.gz'
+    return send_file(filename, as_attachment=True, mimetype='application/gzip')
+
+
+@app.route('/windows_download', methods=['GET', 'POST'])
+@login_required
+def windows_file():
+    create_files()
+    minutes = request.form['minutes']
+    if minutes == '':
+        minutes = '60'
+    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ':' + session.get('username') + ' requested windows_app for ' + minutes + ' minutes' + "\n")
+    set_timer_for_revoke(session.get('username'), minutes)
+    filename = '/var/www/FlaskApp/windows_app.tar.gz'
+    return send_file(filename, as_attachment=True, mimetype='application/gzip')
+
+
 def set_timer_for_revoke(username, time):
-    t = Timer(time, revoke_client, [username])
+    unrevoke_client(username)
+    t = threading.Timer(time * 60, revoke_client, [username])
+    user = User.query.filter_by(username=session.get('username')).first()
+    user.timer_name = t.getName()
+    db.session.commit()
+    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ':' + username + ' was set a timer with name ' + user.timer_name + ' for ' + str(time) + ' minutes.' + "\n")
     t.start()
+    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': Timer ' + t.getName() + ' started.' + "\n")
 
 
 def revoke_client(username):
+    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': Revoke script about to be called.' + "\n")
     os.system("/var/www/FlaskApp/FlaskApp/key_management_scripts/revoke.sh " + username)
+    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': Revoke script called and finished.' + "\n")
 
 
 def unrevoke_client(username):
+    log('Unrevoke operation for client ' + username + ' started.' + "\n")
+    user = User.query.filter_by(username=session.get('username')).first()
+    if user.timer_name is not None:
+        log('user.timer_name is not none' + "\n")
+        for thr in threading.enumerate():
+            log('inside enumerate iteration' + "\n")
+            log('thr.getName()=' + thr.getName() + ', user.timer_name=' + user.timer_name + "\n")
+            if thr.getName() == user.timer_name:
+                log('Timer ' + thr.getName() + ' is about to be canceled, due to newer request' + "\n")
+                thr.cancel()
+    user.timer_name = None
+    db.session.commit()
     os.system("/var/www/FlaskApp/FlaskApp/key_management_scripts/unrevoke.sh " + username)
+    log('Unrevoke operation finished for client ' + username + '.' + "\n")
+
+
+def log(string):
+    with open('/var/www/FlaskApp/FlaskApp/timing_log.log', 'a') as f:
+        f.write(string)
+        f.close
 
 
 # start the server with the 'run()' method

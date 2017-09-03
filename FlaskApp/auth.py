@@ -14,12 +14,14 @@ class User(db.Model):
     password = db.Column(db.String(80), unique=False)
     email = db.Column(db.String(120), unique=True)
     admin_rights = db.Column(db.Boolean(), default=False)
+    timer_name = db.Column(db.String(20), unique=False)
 
     def __init__(self, username, password, email, admin_rights):
         self.username = username
         self.password = password
         self.email = email
         self.admin_rights = admin_rights
+        self.timer_name = None
 
     def __repr__(self):
         return '<User %r>' % self.username

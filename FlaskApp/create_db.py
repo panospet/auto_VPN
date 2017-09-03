@@ -10,6 +10,7 @@ conn.execute('''CREATE TABLE user
      PASSWORD   TEXT    NOT NULL,
      EMAIL  TEXT    NOT NULL,
      ADMIN_RIGHTS  BOOLEAN  NOT NULL
+     TIMER_NAME TEXT NULL
     );'''
 )
 print 'Table created successfully'
