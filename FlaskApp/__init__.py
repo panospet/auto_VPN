@@ -137,19 +137,19 @@ def logout():
 def file():
     create_files()
     minutes = request.form['minutes']
-    with open('/var/www/FlaskApp/FlaskApp/mpla.txt', 'a') as f:
+    with open('/var/www/FlaskApp/FlaskApp/timing_log.log', 'a') as f:
         f.write(session.get('username') + ' requested linux_app for ' + minutes + ' minutes' + "\n")
         f.close()
     filename = '/var/www/FlaskApp/linux_app.tar.gz'
     return send_file(filename, as_attachment=True, mimetype='application/gzip')
 
 
-@app.route('/windows_download')
+@app.route('/windows_download', methods=['GET', 'POST'])
 @login_required
 def windows_file():
     create_files()
     minutes = request.form['minutes']
-    with open('/var/www/FlaskApp/FlaskApp/mpla.txt', 'a') as f:
+    with open('/var/www/FlaskApp/FlaskApp/timing_log.log', 'a') as f:
         f.write(session.get('username') + ' requested windows_app for ' + minutes + ' minutes' + "\n")
         f.close()
     filename = '/var/www/FlaskApp/windows_app.tar.gz'
