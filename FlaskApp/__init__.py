@@ -6,6 +6,7 @@ import os
 import subprocess
 from auth import *  # NOQA
 from add_user_to_db import add_user
+from threading import Timer
 
 # create the application object
 app = Flask(__name__)
@@ -131,10 +132,14 @@ def logout():
     return redirect(url_for('welcome'))
 
 
-@app.route('/linux_download')
+@app.route('/linux_download', methods=['GET', 'POST'])
 @login_required
 def file():
     create_files()
+    minutes = request.form['minutes']
+    with open('/var/www/FlaskApp/FlaskApp/mpla.txt', 'a') as f:
+        f.write(session.get('username') + ' requested linux_app for ' + minutes + ' minutes' + "\n")
+        f.close()
     filename = '/var/www/FlaskApp/linux_app.tar.gz'
     return send_file(filename, as_attachment=True, mimetype='application/gzip')
 
@@ -143,6 +148,10 @@ def file():
 @login_required
 def windows_file():
     create_files()
+    minutes = request.form['minutes']
+    with open('/var/www/FlaskApp/FlaskApp/mpla.txt', 'a') as f:
+        f.write(session.get('username') + ' requested windows_app for ' + minutes + ' minutes' + "\n")
+        f.close()
     filename = '/var/www/FlaskApp/windows_app.tar.gz'
     return send_file(filename, as_attachment=True, mimetype='application/gzip')
 
@@ -166,6 +175,19 @@ def clientcert():
 def clientkey():
     filename = '/usr/share/easy-rsa/keys/' + session['username'] + '.key'
     return send_file(filename, as_attachment=True, mimetype='application/text')
+
+
+def set_timer_for_revoke(username, time):
+    t = Timer(time, revoke_client, [username])
+    t.start()
+
+
+def revoke_client(username):
+    os.system("/var/www/FlaskApp/FlaskApp/key_management_scripts/revoke.sh " + username)
+
+
+def unrevoke_client(username):
+    os.system("/var/www/FlaskApp/FlaskApp/key_management_scripts/unrevoke.sh " + username)
 
 
 # start the server with the 'run()' method

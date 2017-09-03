@@ -15,8 +15,23 @@
       {% endfor %}
       </p>
       <p>Click <a href="/logout">here</a> to logout.</p>
-      <p>Click <a href="/linux_download">here</a> to receive Linux client script.</p>
-      <p>Click <a href="/windows_download">here</a> to receive Windows client script.</p>
+
+      <p>
+        I want access to VPN service for
+        <form action="/linux_download" method="POST">
+        <input type="text" name="minutes">
+        <input type="submit" name="linux-form" value="Download Linux Script">
+        </form> minutes.
+      </p>
+
+      <p>
+        I want access to VPN service for
+        <form action="/windows_download" method="POST">
+        <input type="text" name="minutes">
+        <input type="submit" name="windows-form" value="Download Windows Script">
+        </form> minutes.
+      </p>
+
     </div>
   </body>
 </html>
