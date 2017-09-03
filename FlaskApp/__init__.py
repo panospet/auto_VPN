@@ -7,6 +7,7 @@ import subprocess
 from auth import *  # NOQA
 from add_user_to_db import add_user
 from threading import Timer
+import datetime
 
 # create the application object
 app = Flask(__name__)
@@ -137,8 +138,10 @@ def logout():
 def file():
     create_files()
     minutes = request.form['minutes']
+    if minutes == '':
+        minutes = '60'
     with open('/var/www/FlaskApp/FlaskApp/timing_log.log', 'a') as f:
-        f.write(session.get('username') + ' requested linux_app for ' + minutes + ' minutes' + "\n")
+        f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ':' + session.get('username') + ' requested linux_app for ' + minutes + ' minutes' + "\n")
         f.close()
     filename = '/var/www/FlaskApp/linux_app.tar.gz'
     return send_file(filename, as_attachment=True, mimetype='application/gzip')
@@ -150,7 +153,7 @@ def windows_file():
     create_files()
     minutes = request.form['minutes']
     with open('/var/www/FlaskApp/FlaskApp/timing_log.log', 'a') as f:
-        f.write(session.get('username') + ' requested windows_app for ' + minutes + ' minutes' + "\n")
+        f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ':' + session.get('username') + ' requested windows_app for ' + minutes + ' minutes' + "\n")
         f.close()
     filename = '/var/www/FlaskApp/windows_app.tar.gz'
     return send_file(filename, as_attachment=True, mimetype='application/gzip')
