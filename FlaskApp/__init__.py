@@ -161,7 +161,7 @@ def file():
     minutes = request.form['minutes']
     if minutes == '':
         minutes = '60'
-    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ':' + session.get('username') + ' requested linux_app for ' + minutes + ' minutes' + "\n")
+    log('User ' + session.get('username') + ' requested linux_app for ' + minutes + ' minutes' + "\n")
     set_timer_for_revoke(session.get('username'), float(minutes))
     filename = '/var/www/FlaskApp/linux_app.tar.gz'
     return send_file(filename, as_attachment=True, mimetype='application/gzip')
@@ -174,7 +174,7 @@ def windows_file():
     minutes = request.form['minutes']
     if minutes == '':
         minutes = '60'
-    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ':' + session.get('username') + ' requested windows_app for ' + minutes + ' minutes' + "\n")
+    log('User ' + session.get('username') + ' requested windows_app for ' + minutes + ' minutes' + "\n")
     set_timer_for_revoke(session.get('username'), minutes)
     filename = '/var/www/FlaskApp/windows_app.tar.gz'
     return send_file(filename, as_attachment=True, mimetype='application/gzip')
@@ -186,25 +186,22 @@ def set_timer_for_revoke(username, time):
     user = User.query.filter_by(username=session.get('username')).first()
     user.timer_name = t.getName()
     db.session.commit()
-    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ':' + username + ' was set a timer with name ' + user.timer_name + ' for ' + str(time) + ' minutes.' + "\n")
+    log('User ' + username + ' was set a timer with name ' + user.timer_name + ' for ' + str(time) + ' minutes.' + "\n")
     t.start()
-    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': Timer ' + t.getName() + ' started.' + "\n")
+    log('Timer ' + t.getName() + ' started.' + "\n")
 
 
 def revoke_client(username):
-    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': Revoke script about to be called.' + "\n")
+    log('Revoke script about to be called.' + "\n")
     os.system("/var/www/FlaskApp/FlaskApp/key_management_scripts/revoke.sh " + username)
-    log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': Revoke script called and finished.' + "\n")
+    log('Revoke script called and finished.' + "\n")
 
 
 def unrevoke_client(username):
     log('Unrevoke operation for client ' + username + ' started.' + "\n")
     user = User.query.filter_by(username=session.get('username')).first()
     if user.timer_name is not None:
-        log('user.timer_name is not none' + "\n")
         for thr in threading.enumerate():
-            log('inside enumerate iteration' + "\n")
-            log('thr.getName()=' + thr.getName() + ', user.timer_name=' + user.timer_name + "\n")
             if thr.getName() == user.timer_name:
                 log('Timer ' + thr.getName() + ' is about to be canceled, due to newer request' + "\n")
                 thr.cancel()
@@ -214,9 +211,19 @@ def unrevoke_client(username):
     log('Unrevoke operation finished for client ' + username + '.' + "\n")
 
 
+@app.route('/online_users', methods=['GET', 'POST'])
+@login_required
+def online_users():
+    users = User.query.all()
+    for u in users:
+        if u.timer_name is not None:
+            flash('User ' + u.username + ', timer: ' + u.timer_name + "\n")
+    return render_template('online_users.html')
+
+
 def log(string):
     with open('/var/www/FlaskApp/FlaskApp/timing_log.log', 'a') as f:
-        f.write(string)
+        f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': ' + string)
         f.close
 
 
