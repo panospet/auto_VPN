@@ -8,6 +8,7 @@ from auth import *  # NOQA
 from add_user_to_db import add_user
 import threading
 import datetime
+import time
 
 # create the application object
 app = Flask(__name__)
@@ -71,6 +72,10 @@ def login():
             session['logged_in'] = True
             session['username'] = request.form['username']
             flash('Hello ' + session['username'] + ', you were logged in.')
+            user = User.query.filter_by(username=session.get('username')).first()
+            if user.timer_name is not None:
+                minutes = str(calculate_remaining_time(user.timer_start_time, user.timer_minutes))
+                flash('Hello, you are authorized to use the application for another ' + minutes + ' minutes.')
             return redirect(url_for('home'))
     return render_template('login.html', error=error)
 
@@ -185,21 +190,28 @@ def set_timer_for_revoke(username, time):
     t = threading.Timer(time * 60, revoke_client, [username])
     user = User.query.filter_by(username=session.get('username')).first()
     user.timer_name = t.getName()
+    user.timer_start_time = datetime.datetime.now().replace(microsecond=0)
+    user.timer_minutes = time
     db.session.commit()
     log('User ' + username + ' was set a timer with name ' + user.timer_name + ' for ' + str(time) + ' minutes.' + "\n")
     t.start()
     log('Timer ' + t.getName() + ' started.' + "\n")
 
 
-def revoke_client(username):
-    log('Revoke script about to be called.' + "\n")
-    os.system("/var/www/FlaskApp/FlaskApp/key_management_scripts/revoke.sh " + username)
-    log('Revoke script called and finished.' + "\n")
+def revoke_client(client_name):
+    log('Revoke script for client ' + client_name + ' about to be called.' + "\n")
+    os.system("/var/www/FlaskApp/FlaskApp/key_management_scripts/revoke.sh " + client_name)
+    user = User.query.filter_by(username=client_name).first()
+    user.timer_name = None
+    user.timer_start_time = None
+    user.timer_minutes = None
+    db.session.commit()
+    log('Revoke script for client ' + client_name + ' called and finished.' + "\n")
 
 
-def unrevoke_client(username):
-    log('Unrevoke operation for client ' + username + ' started.' + "\n")
-    user = User.query.filter_by(username=session.get('username')).first()
+def unrevoke_client(client_name):
+    log('Unrevoke operation for client ' + client_name + ' started.' + "\n")
+    user = User.query.filter_by(username=client_name).first()
     if user.timer_name is not None:
         for thr in threading.enumerate():
             if thr.getName() == user.timer_name:
@@ -207,8 +219,8 @@ def unrevoke_client(username):
                 thr.cancel()
     user.timer_name = None
     db.session.commit()
-    os.system("/var/www/FlaskApp/FlaskApp/key_management_scripts/unrevoke.sh " + username)
-    log('Unrevoke operation finished for client ' + username + '.' + "\n")
+    os.system("/var/www/FlaskApp/FlaskApp/key_management_scripts/unrevoke.sh " + client_name)
+    log('Unrevoke operation finished for client ' + client_name + '.' + "\n")
 
 
 @app.route('/online_users', methods=['GET', 'POST'])
@@ -217,7 +229,7 @@ def online_users():
     users = User.query.all()
     for u in users:
         if u.timer_name is not None:
-            flash('User ' + u.username + ', timer: ' + u.timer_name + "\n")
+            flash('User ' + u.username + ', timer: ' + u.timer_name + ', remaining:' + str(calculate_remaining_time(u.timer_start_time, u.timer_minutes)) + "\n")
     return render_template('online_users.html')
 
 
@@ -225,6 +237,21 @@ def log(string):
     with open('/var/www/FlaskApp/FlaskApp/timing_log.log', 'a') as f:
         f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': ' + string)
         f.close
+
+
+def calculate_remaining_time(timer_start_time, minutes):
+    fmt = '%Y-%m-%d %H:%M:%S'
+    timer_start_time = datetime.datetime.strptime(timer_start_time, fmt)
+    now = datetime.datetime.now()
+
+    d1_ts = time.mktime(timer_start_time.timetuple())
+    d2_ts = time.mktime(now.timetuple())
+
+    remaining = minutes - int((d2_ts - d1_ts) / 60)
+    if remaining < 0:
+        remaining = 0
+
+    return remaining
 
 
 # start the server with the 'run()' method

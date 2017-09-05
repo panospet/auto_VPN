@@ -15,6 +15,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True)
     admin_rights = db.Column(db.Boolean(), default=False)
     timer_name = db.Column(db.String(20), unique=False)
+    timer_start_time = db.Column(db.String(20), unique=False)
+    timer_minutes = db.Column(db.Integer, unique=False)
 
     def __init__(self, username, password, email, admin_rights):
         self.username = username
