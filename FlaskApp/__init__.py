@@ -9,6 +9,7 @@ from add_user_to_db import add_user
 import threading
 import datetime
 import time
+from pbkdf2.pbkdf2 import crypt
 
 # create the application object
 app = Flask(__name__)
@@ -71,7 +72,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if User.query.filter_by(username=username, password=password).first() is None:
+        if User.query.filter_by(username=username, password=crypt(password, '1we1505f7', 26000)).first() is None:
             error = 'Invalid Credentials. Please try again.'
         else:
             session['logged_in'] = True

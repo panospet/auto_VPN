@@ -2,6 +2,7 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from __init__ import app as app
+from pbkdf2.pbkdf2 import crypt
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////var/www/FlaskApp/FlaskApp/test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -20,7 +21,7 @@ class User(db.Model):
 
     def __init__(self, username, password, email, admin_rights):
         self.username = username
-        self.password = password
+        self.password = crypt(password, '1we1505f7', 26000)
         self.email = email
         self.admin_rights = admin_rights
         self.timer_name = None
