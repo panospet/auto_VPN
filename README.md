@@ -12,6 +12,8 @@ to handle wsgi. This is needed to be able to run Flask framework.
     sudo openvpn --config /path/to/server.conf
 It is better to enter absolute path to file server.conf. You can use the --daemon option to run it as a
 daemon as well.
+4. pbkdf2 package is borrowed from here. https://github.com/dlitz/python-pbkdf2 Please clone and run 
+setup.py, then rename 'python-pbkdf2' folder to 'pbkdf2'.
 
 #### Client side
 Just download the script that the server gives to you, and run it.
