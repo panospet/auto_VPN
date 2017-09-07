@@ -33,7 +33,12 @@ def login_required(f):
 @app.route('/')
 @login_required
 def home():
-    return render_template('index.html')
+    user = User.query.filter_by(username=session.get('username')).first()
+    if user.timer_name is not None:
+        minutes = 'You are authorized to use the VPN application for another ' + str(calculate_remaining_time(user.timer_start_time, user.timer_minutes)) + ' minutes.'
+    else:
+        minutes = 'You are not authorized to use the application (no time left). Please apply for more.'
+    return render_template('index.html', minutes=minutes)
 
 
 @app.route('/welcome')
@@ -72,10 +77,7 @@ def login():
             session['logged_in'] = True
             session['username'] = request.form['username']
             flash('Hello ' + session['username'] + ', you were logged in.')
-            user = User.query.filter_by(username=session.get('username')).first()
-            if user.timer_name is not None:
-                minutes = str(calculate_remaining_time(user.timer_start_time, user.timer_minutes))
-                flash('Hello, you are authorized to use the application for another ' + minutes + ' minutes.')
+            # flash('You are authorized to use the application for another ' + minutes + ' minutes.')
             return redirect(url_for('home'))
     return render_template('login.html', error=error)
 
