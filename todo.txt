@@ -1,19 +1,8 @@
 #### Must do
 
+- flask pbkdf2 ==> for encrypting user pass
+- The user must see if he's connected
+- Page with VPN services ready to see if connected
 - Documentation for 
     a. usability and explanation of why this is something significant
     b. functionality and how it works (server and client)
-- Script must totally wipe out what it has created
-    I can use the "shred" command.
-- Revoke/unrevoke certificates python methods[1]
-- script wipes out everything
-- prompt user if connection fails to re-login and re-download the bundle
-
-# revoke
-source ./vars
-./revoke-full username // crl.pem is created automatically
-
-# unrevoke
-edit index.txt manually
-source ./vars
-openssl ca -gencrl -out "crl.pem" -config "$KEY_CONFIG"
