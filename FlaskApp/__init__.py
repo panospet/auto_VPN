@@ -106,8 +106,8 @@ def admin_login():
 
 
 def create_files():
-    password = User.query.filter_by(username=session['username']).first().password
-    edit_client_script(session.get('username'), password)
+    # password = User.query.filter_by(username=session['username']).first().password
+    # edit_client_script(session.get('username'), password)
     user_folder = "/var/www/FlaskApp/FlaskApp/" + session['username'] + "_files"
     os.system("mkdir -p " + user_folder)
     os.system("cp /usr/share/easy-rsa/keys/ca.crt " + user_folder)

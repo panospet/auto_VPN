@@ -16,7 +16,9 @@ c.setopt(pycurl.CAINFO, certifi.where())
 c.setopt(pycurl.URL, 'https://83.212.116.170/login')
 c.setopt(pycurl.SSL_VERIFYPEER, 0)
 c.setopt(pycurl.COOKIEFILE, 'cookie.txt')
-post_data = {'username': '', 'password': ''}
+username = raw_input('Username: ')
+password = getpass.getpass()
+post_data = {'username': username, 'password': password}
 postfields = urlencode(post_data)
 c.setopt(pycurl.POSTFIELDS, postfields)
 c.setopt(c.FOLLOWLOCATION, True)
