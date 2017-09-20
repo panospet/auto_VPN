@@ -15,6 +15,9 @@
       {% endfor %}
       </p>
       <p>{{ minutes }}</p>
+      {% if connected %}
+      <p>You are connected!! Click <a href="http://10.8.0.1/">here</a> for some cool applications.</p>
+      {% endif %}
       <p>Click <a href="/logout">here</a> to logout.</p>
 
       <p>
@@ -32,8 +35,6 @@
         <input type="submit" name="windows-form" value="Download Windows Script">
         </form> minutes.
       </p>
-
-      <p>If you are connected, click <a href="http://10.8.0.1/">here</a> for some cool applications.</p>
 
     </div>
   </body>

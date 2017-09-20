@@ -34,12 +34,15 @@ def login_required(f):
 @app.route('/')
 @login_required
 def home():
+    connected = False
     user = User.query.filter_by(username=session.get('username')).first()
     if user.timer_name is not None:
         minutes = 'You are authorized to use the VPN application for another ' + str(calculate_remaining_time(user.timer_start_time, user.timer_minutes)) + ' minutes.'
+        if session.get('username') in list_connected_users():
+            connected = True
     else:
         minutes = 'You are not authorized to use the application (no time left). Please apply for more.'
-    return render_template('index.html', minutes=minutes)
+    return render_template('index.html', minutes=minutes, connected=connected)
 
 
 @app.route('/welcome')
@@ -78,7 +81,6 @@ def login():
             session['logged_in'] = True
             session['username'] = request.form['username']
             flash('Hello ' + session['username'] + ', you were logged in.')
-            # flash('You are authorized to use the application for another ' + minutes + ' minutes.')
             return redirect(url_for('home'))
     return render_template('login.html', error=error)
 
@@ -255,6 +257,10 @@ def calculate_remaining_time(timer_start_time, minutes):
         remaining = 0
 
     return remaining
+
+
+def list_connected_users():
+    return subprocess.check_output('/var/www/FlaskApp/FlaskApp/key_management_scripts/list_connected_users.sh')
 
 
 # start the server with the 'run()' method
