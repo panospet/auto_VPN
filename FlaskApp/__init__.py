@@ -107,7 +107,7 @@ def admin_login():
 
 def create_files():
     # password = User.query.filter_by(username=session['username']).first().password
-    # edit_client_script(session.get('username'), password)
+    edit_client_script()
     user_folder = "/var/www/FlaskApp/FlaskApp/" + session['username'] + "_files"
     os.system("mkdir -p " + user_folder)
     os.system("cp /usr/share/easy-rsa/keys/ca.crt " + user_folder)
@@ -118,16 +118,16 @@ def create_files():
             'username'] + '* /var/www/FlaskApp/FlaskApp/' + session['username'] + '_files/', shell=True)
 
 
-def edit_client_script(username, password):
+def edit_client_script():
     with open('/var/www/FlaskApp/linux_app/client_script.py', 'r') as file:
         linux_file_lines = file.readlines()
-    linux_file_lines[18] = unicode("post_data = {'username': '" + username + "', 'password': '" + password + "'}" + "\n")
+    linux_file_lines[18] = unicode('username = \'' + session['username']) + '\'' + "\n"
     with open('/var/www/FlaskApp/linux_app/client_script.py', 'w') as file:
         file.writelines(linux_file_lines)
 
     with open('/var/www/FlaskApp/windows_app/script.py', 'r') as file:
         windows_file_lines = file.readlines()
-    windows_file_lines[14] = "post_data = {'username': '" + username + "', 'password': '" + password + "'}" + "\n"
+    windows_file_lines[16] = unicode('username = \'' + session['username']) + '\'' + "\n"
     with open('/var/www/FlaskApp/windows_app/script.py', 'w') as file:
         file.writelines(windows_file_lines)
 
