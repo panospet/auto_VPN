@@ -51,11 +51,6 @@ def welcome():
     return render_template('welcome.html')
 
 
-@app.route('/test')
-def test():
-    return render_template('register.html')
-
-
 @app.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
@@ -106,7 +101,6 @@ def admin_login():
 
 
 def create_files():
-    # password = User.query.filter_by(username=session['username']).first().password
     edit_client_script()
     user_folder = "/var/www/FlaskApp/FlaskApp/" + session['username'] + "_files"
     os.system("mkdir -p " + user_folder)
@@ -228,6 +222,7 @@ def unrevoke_client(client_name):
     log('Unrevoke operation finished for client ' + client_name + '.' + "\n")
 
 
+# used for debugging reasons: shows all users logged in, and their remaining time as well
 @app.route('/online_users', methods=['GET', 'POST'])
 @login_required
 def online_users():
